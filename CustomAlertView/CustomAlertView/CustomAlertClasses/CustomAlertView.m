@@ -26,21 +26,25 @@
 -(CustomAlertView*) initWithTitle:(NSString*)title message :(NSString*)message andButtonsText:(NSArray*)ButtonsText andCancelButtonsText:(NSString*)cancelButtonText withDelegate:(id)delegateController
 {
     self = [super init];
-    self.alertBox = [[CustomAlertBox alloc]initWithTitle:title message:message andButtonsText:ButtonsText andCancelButtonsText:cancelButtonText];
-    self.alertBox.delegate = self;
-    [self addSubview:self.alertBox];
-    self.frame = CGRectMake(0, 0, 320, 480);
-    self.alertBox.center = self.center;
-    self.backgroundColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.4];
-    self.delegate = delegate;
+    if (self) {
+        self.delegate = delegateController;
+        
+        CGRect frame = [UIScreen mainScreen].applicationFrame ;
+        self.frame = frame;
+        
+        self.alertBox = [[CustomAlertBox alloc]initWithTitle:title message:message andButtonsText:ButtonsText andCancelButtonsText:cancelButtonText];
+        self.alertBox.delegate = self; 
+        self.alertBox.center = CGPointMake(self.center.x, self.center.y - [UIScreen mainScreen].applicationFrame.origin.y ) ;
+        [self addSubview:self.alertBox];
+        self.backgroundColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.4];
+    }
+   
     return self;
 }
 -(void)show
 {
     self.alpha =  0;
     [[[[UIApplication sharedApplication]windows]lastObject]addSubview:self];
-    
-    NSLog(@"key window : %@", [UIApplication sharedApplication].keyWindow);
     
     [UIView animateWithDuration:0.4 animations:^(void)
      {
@@ -52,7 +56,6 @@
 }
 -(void)hide
 {
-    
     [UIView animateWithDuration:0.3 animations:^(void)
      {
          self.alpha =  0;
@@ -60,7 +63,6 @@
      }completion:^(BOOL finished) {
          [self removeFromSuperview];
      }];
-    
 }
 
 #pragma mark - <CustomAlertBoxDelegate method
